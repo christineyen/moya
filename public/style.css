@@ -18,8 +18,8 @@ h1, h2 {
 }
 a { color: #00364A; }
 p { clear: both; }
-ul { padding: 0; }
-li { list-style-type: none; }
+form ul { padding: 0; }
+form li { list-style-type: none; }
 
 #wrapper {
   width: 800px;
