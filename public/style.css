@@ -52,9 +52,11 @@ form ul li label {
   color: #00364A;
   border: 1px dotted #95CB15;
   font-size: 0.8em;
-  min-height: 200px;
-  width: 75%;
-  margin: 0 auto;
+  width: 80%;
+  margin: 20px auto 0;
+}
+.import-error {
+  color: #990033;
 }
 
 p.details {

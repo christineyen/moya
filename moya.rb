@@ -18,7 +18,6 @@ helpers do
   # Call the ReadItLater API
   def fetch_readitlater_items(username, password)
     data = [['apikey', ENV['RIL_API_KEY']],
-            ['count', 5],
             ['username', username],
             ['password', password]]
     url = "#{RIL_GET}?" + data.map{ |k, v| "#{k}=#{v}" }.join('&')
@@ -51,7 +50,6 @@ helpers do
 
   # Call the Instapaper API to create all the items
   def create_instapaper_items(username, password, item)
-    item = { 'title' => item[:title], 'url' => item[:url] }
     execute_ssl_post(INST_ADD, username, password, item, true)
   end
 
@@ -113,31 +111,42 @@ get '/' do
 end
 
 post '/ready' do
-  @errors = {}
+  errors = {}
+  items = []
 
   # Check and handle ReadItLater errors
   ril_response = fetch_readitlater_items(
       params['ril']['username'], params['ril']['password'])
   unless ril_response.code == '200'
-    @errors['ReadItLater'] = decode_ril_errors(ril_response.code)
+    errors['ReadItLater'] = decode_ril_errors(ril_response.code)
   end
 
   # Check for and handle Instapaper errors
-  @un = params['inst']['username']
+  un = params['inst']['username']
   pw = params['inst']['password']
-  inst_response = check_inst_credentials(@un, pw)
+  inst_response = check_inst_credentials(un, pw)
   unless inst_response.code == '200'
-    @errors['Instapaper'] = decode_inst_errors(inst_response.code)
+    errors['Instapaper'] = decode_inst_errors(inst_response.code)
   end
 
-  if @errors.empty?
+  if errors.empty?
     json = JSON.parse(ril_response.body)
-    @items = convert_ril_json_to_instapaper(json)
-    @items.each do |item|
-      create_instapaper_items(@un, pw, item)
-    end
+    items = convert_ril_json_to_instapaper(json)
   end
 
-  haml :ready
+  content_type :json
+  { :items => items,
+    :errors => errors,
+    :username => un,
+    :password => pw }.to_json
+end
+
+post '/migrate' do
+  # It's unclear why we do this - bear with me
+  item = { 'title' => params['title'], 'url' => params['url'] }
+  resp = create_instapaper_items(params['username'], params['password'], item)
+
+  content_type :json
+  { :code => resp.code, :url => params['url'] }.to_json
 end
 
