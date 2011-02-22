@@ -6,7 +6,7 @@ require 'net/https'
 require 'uri'
 require 'json'
 
-RIL_GET = 'https://readitlaterlist.com/v2/get?username=USERNAME&password=PASSWORD&apikey=APIKEY&count=5'
+RIL_GET = 'https://readitlaterlist.com/v2/get'
 INST_ADD = 'https://www.instapaper.com/api/add'
 INST_AUTH = 'https://www.instapaper.com/api/authenticate'
 
@@ -17,8 +17,12 @@ ERR_VAGUE = "Something mysterious and bad happened. We're on it!"
 helpers do
   # Call the ReadItLater API
   def fetch_readitlater_items(username, password)
-    data = { 'apikey' => ENV['RIL_API_KEY'] }
-    execute_ssl_post(RIL_GET, username, password, data)
+    data = [['apikey', ENV['RIL_API_KEY']],
+            ['count', 5],
+            ['username', username],
+            ['password', password]]
+    url = "#{RIL_GET}?" + data.map{ |k, v| "#{k}=#{v}" }.join('&')
+    execute_ssl_get(url)
   end
 
   def check_inst_credentials(username, password)
@@ -51,11 +55,15 @@ helpers do
     execute_ssl_post(INST_ADD, username, password, item, true)
   end
 
-  def execute_ssl_post(url, username, password, data, basic_auth = false)
+  def execute_ssl_get(url)
     uri = URI.parse(url)
 
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
+    request = Net::HTTP::Get.new(uri.request_uri)
+    ssl_request(uri, request)
+  end
+
+  def execute_ssl_post(url, username, password, data, basic_auth = false)
+    uri = URI.parse(url)
 
     request = Net::HTTP::Post.new(uri.request_uri)
     if basic_auth
@@ -64,6 +72,12 @@ helpers do
       data.merge({ 'username' => username, 'password' => password })
     end
     request.set_form_data(data)
+    ssl_request(uri, request)
+  end
+
+  def ssl_request(uri, request)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
     http.request(request)
   end
 
@@ -110,7 +124,7 @@ post '/ready' do
 
   # Check for and handle Instapaper errors
   inst_response = check_inst_credentials(
-      params['inst']['username'], params['inst']['username'])
+      params['inst']['username'], params['inst']['password'])
   if inst_response.code == '200'
     session['inst'] = params['inst']
   else
