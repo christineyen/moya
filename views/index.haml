@@ -1,24 +1,25 @@
 %h1 ReadItLater -> Instapaper migrations
 %p Enter your RIL and Instapaper credentials below to export your pending RIL bookmarks and import them into Instapaper. If you're not comfortable with pasting in your credentials, I recommend you go change your passwords to something temporary, until RIL / Instapaper support OAuth :)
+%p Nothing you enter will be saved - everything should simply pass straight through our service and add items to your Instapaper account.
 %form{ :class => 'credentials', :action => 'migrate', :method => 'post' }
   #readitlater.column
     .column-header ReadItLater credentials
     %ul
       %li
         %label{ :for => 'ril_username' } Username
-        %input{ :id => 'ril_username' }
+        %input{ :id => 'ril_username', :name => 'ril[username]' }
       %li
         %label{ :for => 'ril_password' } Password
-        %input{ :id => 'ril_password' }
+        %input{ :id => 'ril_password', :type => 'password', :name => 'ril[password]' }
   #instapaper.column
     .column-header Instapaper credentials
     %ul
       %li
         %label{ :for => 'inst_username' } Username
-        %input{ :id => 'inst_username' }
+        %input{ :id => 'inst_username', :name => 'inst[username]' }
       %li
         %label{ :for => 'inst_password' } Password
-        %input{ :id => 'inst_password' }
+        %input{ :id => 'inst_password', :type => 'password', :name => 'inst[password]' }
   #submit
     %input{ :type => 'submit', :value => 'Begin migration!' }
 %p{ :class => 'details' } I was a reasonably satisfied ReadItLater user for awhile (if I recall, the main tipping point in my decision between the two services in the first place was the ever-so-slightly superior RIL iPhone app, which supported real full-screen support for articles).
