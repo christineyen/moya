@@ -1,14 +1,10 @@
 -if @errors.empty?
-  %h1 Ready to migrate!
+  %h1 Migrated!
   %p
     = @items.size
-    items ready to be migrated from your ReadItLater account.
-    %a{ :href => '#' }Begin import
-    into your Instapaper account?
-  %script{ :type => 'text/javascript' }
-    moya.items =
-    = JSON.unparse(@items)
-    ;
+    migrated to your Instapaper account (
+    = @un
+    )! Thanks for your patience.
 -else
   %h1 Error during migration.
   %p

@@ -48,6 +48,15 @@ form ul li label {
   text-align: center;
 }
 
+.import-status {
+  color: #00364A;
+  border: 1px dotted #95CB15;
+  font-size: 0.8em;
+  min-height: 200px;
+  width: 75%;
+  margin: 0 auto;
+}
+
 p.details {
   font-size: 0.8em;
 }

@@ -123,31 +123,21 @@ post '/ready' do
   end
 
   # Check for and handle Instapaper errors
-  inst_response = check_inst_credentials(
-      params['inst']['username'], params['inst']['password'])
-  if inst_response.code == '200'
-    session['inst'] = params['inst']
-  else
+  @un = params['inst']['username']
+  pw = params['inst']['password']
+  inst_response = check_inst_credentials(@un, pw)
+  unless inst_response.code == '200'
     @errors['Instapaper'] = decode_inst_errors(inst_response.code)
   end
 
   if @errors.empty?
     json = JSON.parse(ril_response.body)
     @items = convert_ril_json_to_instapaper(json)
+    @items.each do |item|
+      create_instapaper_items(@un, pw, item)
+    end
   end
 
   haml :ready
 end
 
-post '/migrate' do
-
-  inst_username = params['inst']['username']
-  inst_password = params['inst']['password']
-  inst_items.each do |item|
-    resp = create_instapaper_items(inst_username, inst_password, item)
-  end
-
-  #raise ril_items.inspect
-
-  haml :migrate
-end
