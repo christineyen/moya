@@ -5,6 +5,10 @@
     items ready to be migrated from your ReadItLater account.
     %a{ :href => '#' }Begin import
     into your Instapaper account?
+  %script{ :type => 'text/javascript' }
+    moya.items =
+    = JSON.unparse(@items)
+    ;
 -else
   %h1 Error during migration.
   %p
