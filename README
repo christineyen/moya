@@ -1,0 +1,5 @@
+ReadItLater and Instapaper both support export, but only ReadItLater supports
+importing of Instapaper bookmarks (rather than the other way around.)
+
+This Sinatra app aims to solve that problem (while giving me a chance to finally
+play around with HAML!)
