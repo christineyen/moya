@@ -61,13 +61,21 @@ get '/' do
   haml :index
 end
 
-post '/migrate' do
+post '/ready' do
+  raise 'Required credentials not supplied' unless params['ril'] and params['inst']
   ril_items = fetch_readitlater_items(
       params['ril']['username'], params['ril']['password'])
-  raise "error! #{ril_items.code} received" unless ril_items.code == '200'
+  if ril_items.code == '200'
+    session['inst'] = params['inst']
+    json = JSON.parse(ril_items.body)
+    @items = convert_ril_json_to_instapaper(json)
+  else
+    @error = ril_items.code if ril_items.code != '200'
+  end
+  haml :ready
+end
 
-  json = JSON.parse(ril_items.body)
-  inst_items = convert_ril_json_to_instapaper(json)
+post '/migrate' do
 
   inst_username = params['inst']['username']
   inst_password = params['inst']['password']
