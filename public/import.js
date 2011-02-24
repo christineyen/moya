@@ -6,7 +6,7 @@ var moya = function() {
   var password = '';
 
   var importIndividual = function(ct, doneCallback) {
-    var next = items.pop();
+    var next = items.shift();
     if (next == undefined) {
       doneCallback();
       return;

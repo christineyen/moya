@@ -10,6 +10,12 @@ RIL_GET = 'https://readitlaterlist.com/v2/get'
 INST_ADD = 'https://www.instapaper.com/api/add'
 INST_AUTH = 'https://www.instapaper.com/api/authenticate'
 
+
+
+# OAUTH: http://oauth.rubyforge.org/
+
+
+
 ERR_UNAUTHORIZED = 'Looks like you provided incorrect credentials! Try again?'
 ERR_REMOTE = "Not our fault! Looks like something's up remotely. Try again later."
 ERR_VAGUE = "Something mysterious and bad happened. We're on it!"
@@ -18,6 +24,7 @@ helpers do
   # Call the ReadItLater API
   def fetch_readitlater_items(username, password)
     data = [['apikey', ENV['RIL_API_KEY']],
+            ['count', 10],
             ['username', username],
             ['password', password]]
     url = "#{RIL_GET}?" + data.map{ |k, v| "#{k}=#{v}" }.join('&')
@@ -39,10 +46,11 @@ helpers do
   #       'item_id' => __,
   #       'state' => __ }, # '0' is unread; '1' is read
   #   { _id_2_ => .....
-  # We will return read items, in added order, to be sent to Instapaper:
+  # We will return read items, in updated order, to be sent to Instapaper
   #   url + title
   def convert_ril_json_to_instapaper(ril_items)
-    items = ril_items['list'].values.sort_by{ |elt| elt['time_added'] }
+    items = ril_items['list'].values.reject{ |h| h['state'] == '1' }.
+      sort_by{ |elt| elt['time_updated'] }
     items.map do |item|
       { :url => item['url'], :title => item['title'] }
     end

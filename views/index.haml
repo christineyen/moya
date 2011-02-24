@@ -1,7 +1,7 @@
 %h1 ReadItLater -> Instapaper migrations
-%p Enter your RIL and Instapaper credentials below to export your pending RIL bookmarks and import them into Instapaper. If you're not comfortable with pasting in your credentials, I recommend you go change your passwords to something temporary, until RIL / Instapaper support OAuth :)
+%p Enter your RIL credentials below to export your pending RIL bookmarks and import them into Instapaper. Your Instapaper credentials will be requested via an OAuth flow. If you're not quite comfortable with pasting in your RIL credentials, feel free to change your password to something temporary.
 %p
-  Nothing you enter will be saved - everything should simply pass straight through our service and add items to your Instapaper account. If you don't believe me, take a look at the code that drives this
+  View the source
   %a{ :href => 'http://github.com/christineyen/moya' }on Github
   \.
 %form{ :class => 'credentials', :action => 'ready', :method => 'post' }
