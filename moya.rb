@@ -24,7 +24,6 @@ helpers do
   # Call the ReadItLater API
   def fetch_readitlater_items(username, password)
     data = [['apikey', ENV['RIL_API_KEY']],
-            ['count', 10],
             ['username', username],
             ['password', password]]
     url = "#{RIL_GET}?" + data.map{ |k, v| "#{k}=#{v}" }.join('&')
